@@ -6,6 +6,10 @@ import "testing"
 * $5 + 10 CHF = $10 if rate is 2:1
 * Make amount private
 * Money rounding
+* equals()
+* hashCode()
+* Equal null
+* Equal object
  */
 
 func TestMultiplication(t *testing.T) {
@@ -17,5 +21,15 @@ func TestMultiplication(t *testing.T) {
 	prd = five.Times(3)
 	if prd.amount != 15 {
 		t.Errorf("Expected 15 but got %d", prd.amount)
+	}
+}
+
+func TestEquality(t *testing.T) {
+	five := New(5)
+	if !five.Equals(New(5)) {
+		t.Errorf("Expected true but got false")
+	}
+	if five.Equals(New(6)) {
+		t.Errorf("Expected false but got true")
 	}
 }
