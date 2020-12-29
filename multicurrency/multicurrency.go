@@ -1,24 +1,26 @@
 package multicurrency
 
-// Money structure to capture common functions
-type Money struct {
-	amount int
+import "reflect"
+
+// MoneyInterface interface
+type MoneyInterface interface {
+	Amount() int
 }
 
-// Equals compare two objects
-func (m *Money) Equals(n *Money) bool {
-	return m.amount == n.amount
+// Equals function compares two objects for the value
+func Equals(a MoneyInterface, b MoneyInterface) bool {
+	return a.Amount() == b.Amount() && reflect.TypeOf(a) == reflect.TypeOf(b)
 }
 
 // Dollar structure for the book
 type Dollar struct {
-	Money
+	amount int
 }
 
 // NewDollar method to create new Dollar instance
 func NewDollar(amount int) *Dollar {
 	d := &Dollar{
-		Money{amount: amount},
+		amount: amount,
 	}
 	return d
 }
@@ -26,20 +28,25 @@ func NewDollar(amount int) *Dollar {
 // Times multiply dollar amount and return new instance
 func (d *Dollar) Times(multiplier int) *Dollar {
 	p := &Dollar{
-		Money{amount: d.amount * multiplier},
+		amount: d.amount * multiplier,
 	}
 	return p
 }
 
+// Amount returns amount
+func (d *Dollar) Amount() int {
+	return d.amount
+}
+
 // Franc structure
 type Franc struct {
-	Money
+	amount int
 }
 
 // NewFranc method to create new instance
 func NewFranc(amount int) *Franc {
 	f := &Franc{
-		Money{amount: amount},
+		amount: amount,
 	}
 	return f
 }
@@ -47,7 +54,12 @@ func NewFranc(amount int) *Franc {
 // Times multiply and return a new instance
 func (f *Franc) Times(multiplier int) *Franc {
 	n := &Franc{
-		Money{amount: f.amount * multiplier},
+		amount: f.amount * multiplier,
 	}
 	return n
+}
+
+// Amount returns amount
+func (f *Franc) Amount() int {
+	return f.amount
 }
