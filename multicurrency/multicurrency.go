@@ -12,6 +12,16 @@ func Equals(a MoneyInterface, b MoneyInterface) bool {
 	return a.Amount() == b.Amount() && reflect.TypeOf(a) == reflect.TypeOf(b)
 }
 
+// Dollar function to create new dollar
+func dollar(d int) *Dollar {
+	return NewDollar(d)
+}
+
+// franc function to create new franc
+func franc(f int) *Franc {
+	return NewFranc(f)
+}
+
 // Dollar structure for the book
 type Dollar struct {
 	amount int
