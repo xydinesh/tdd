@@ -59,3 +59,14 @@ func TestEquality(t *testing.T) {
 		t.Errorf("Expected false but got true")
 	}
 }
+
+func TestCurrency(t *testing.T) {
+	one := dollar(1)
+	if one.Currency() != "USD" {
+		t.Errorf("Expected USD got %s", one.Currency())
+	}
+	two := franc(2)
+	if two.Currency() != "CHF" {
+		t.Errorf("Expected CHF got %s", two.Currency())
+	}
+}

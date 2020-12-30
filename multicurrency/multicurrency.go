@@ -5,6 +5,7 @@ import "reflect"
 // MoneyInterface interface
 type MoneyInterface interface {
 	Amount() int
+	Currency() string
 }
 
 // Equals function compares two objects for the value
@@ -24,23 +25,27 @@ func franc(f int) *Franc {
 
 // Dollar structure for the book
 type Dollar struct {
-	amount int
+	amount   int
+	currency string
 }
 
 // NewDollar method to create new Dollar instance
 func NewDollar(amount int) *Dollar {
 	d := &Dollar{
-		amount: amount,
+		amount:   amount,
+		currency: "USD",
 	}
 	return d
 }
 
 // Times multiply dollar amount and return new instance
 func (d *Dollar) Times(multiplier int) *Dollar {
-	p := &Dollar{
-		amount: d.amount * multiplier,
-	}
-	return p
+	return dollar(d.amount * multiplier)
+}
+
+// Currency return currency format
+func (d *Dollar) Currency() string {
+	return d.currency
 }
 
 // Amount returns amount
@@ -50,26 +55,30 @@ func (d *Dollar) Amount() int {
 
 // Franc structure
 type Franc struct {
-	amount int
+	amount   int
+	currency string
 }
 
 // NewFranc method to create new instance
 func NewFranc(amount int) *Franc {
 	f := &Franc{
-		amount: amount,
+		amount:   amount,
+		currency: "CHF",
 	}
 	return f
 }
 
 // Times multiply and return a new instance
 func (f *Franc) Times(multiplier int) *Franc {
-	n := &Franc{
-		amount: f.amount * multiplier,
-	}
-	return n
+	return franc(f.amount * multiplier)
 }
 
 // Amount returns amount
 func (f *Franc) Amount() int {
 	return f.amount
+}
+
+// Currency return currency format
+func (f *Franc) Currency() string {
+	return f.currency
 }
