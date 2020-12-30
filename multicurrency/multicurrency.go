@@ -1,6 +1,6 @@
 package multicurrency
 
-import "reflect"
+import "fmt"
 
 // MoneyInterface interface
 type MoneyInterface interface {
@@ -10,75 +10,76 @@ type MoneyInterface interface {
 
 // Equals function compares two objects for the value
 func Equals(a MoneyInterface, b MoneyInterface) bool {
-	return a.Amount() == b.Amount() && reflect.TypeOf(a) == reflect.TypeOf(b)
+	return a.Amount() == b.Amount() && a.Currency() == b.Currency()
+}
+
+// String method prints the currency value and type
+func String(a MoneyInterface) string {
+	return fmt.Sprintf("%d %s", a.Amount(), a.Currency())
+}
+
+// Money is a super class for Dollar and Franc
+type Money struct {
+	amount   int
+	currency string
+}
+
+// Amount returns the amount
+func (m *Money) Amount() int {
+	return m.amount
+}
+
+// Currency retuns the currenecy
+func (m *Money) Currency() string {
+	return m.currency
+}
+
+// Times returns the multiplications
+func (m *Money) Times(multiplier int) *Money {
+	return &Money{
+		amount:   m.Amount() * multiplier,
+		currency: m.Currency(),
+	}
 }
 
 // Dollar function to create new dollar
-func dollar(d int) *Dollar {
+func dollar(d int) *Money {
 	return NewDollar(d)
 }
 
 // franc function to create new franc
-func franc(f int) *Franc {
+func franc(f int) *Money {
 	return NewFranc(f)
 }
 
 // Dollar structure for the book
 type Dollar struct {
-	amount   int
-	currency string
+	Money
 }
 
 // NewDollar method to create new Dollar instance
-func NewDollar(amount int) *Dollar {
+func NewDollar(amount int) *Money {
 	d := &Dollar{
-		amount:   amount,
-		currency: "USD",
+		Money{
+			amount:   amount,
+			currency: "USD",
+		},
 	}
-	return d
-}
-
-// Times multiply dollar amount and return new instance
-func (d *Dollar) Times(multiplier int) *Dollar {
-	return dollar(d.amount * multiplier)
-}
-
-// Currency return currency format
-func (d *Dollar) Currency() string {
-	return d.currency
-}
-
-// Amount returns amount
-func (d *Dollar) Amount() int {
-	return d.amount
+	return &d.Money
 }
 
 // Franc structure
 type Franc struct {
-	amount   int
-	currency string
+	Money
 }
 
 // NewFranc method to create new instance
-func NewFranc(amount int) *Franc {
+func NewFranc(amount int) *Money {
 	f := &Franc{
-		amount:   amount,
-		currency: "CHF",
+		Money{
+			amount:   amount,
+			currency: "CHF",
+		},
 	}
-	return f
-}
-
-// Times multiply and return a new instance
-func (f *Franc) Times(multiplier int) *Franc {
-	return franc(f.amount * multiplier)
-}
-
-// Amount returns amount
-func (f *Franc) Amount() int {
-	return f.amount
-}
-
-// Currency return currency format
-func (f *Franc) Currency() string {
-	return f.currency
+	return &f.Money
 }
