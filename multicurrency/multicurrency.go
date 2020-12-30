@@ -44,42 +44,16 @@ func (m *Money) Times(multiplier int) *Money {
 
 // Dollar function to create new dollar
 func dollar(d int) *Money {
-	return NewDollar(d)
+	return &Money{
+		amount:   d,
+		currency: "USD",
+	}
 }
 
 // franc function to create new franc
 func franc(f int) *Money {
-	return NewFranc(f)
-}
-
-// Dollar structure for the book
-type Dollar struct {
-	Money
-}
-
-// NewDollar method to create new Dollar instance
-func NewDollar(amount int) *Money {
-	d := &Dollar{
-		Money{
-			amount:   amount,
-			currency: "USD",
-		},
+	return &Money{
+		amount:   f,
+		currency: "CHF",
 	}
-	return &d.Money
-}
-
-// Franc structure
-type Franc struct {
-	Money
-}
-
-// NewFranc method to create new instance
-func NewFranc(amount int) *Money {
-	f := &Franc{
-		Money{
-			amount:   amount,
-			currency: "CHF",
-		},
-	}
-	return &f.Money
 }
