@@ -70,3 +70,13 @@ func TestCurrency(t *testing.T) {
 		t.Errorf("Expected CHF got %s", two.Currency())
 	}
 }
+
+func TestSimpleAddition(t *testing.T) {
+	five := dollar(5)
+	sum := five.Plus(five)
+	bank := &Bank{}
+	reduced := bank.Reduce(sum, "USD")
+	if !Equals(reduced, dollar(10)) {
+		t.Errorf("Expected 10 got %d", reduced.Amount())
+	}
+}

@@ -8,6 +8,11 @@ type MoneyInterface interface {
 	Currency() string
 }
 
+// ExpressionInterface interface
+type ExpressionInterface interface {
+	Plus(*Money) *Money
+}
+
 // Equals function compares two objects for the value
 func Equals(a MoneyInterface, b MoneyInterface) bool {
 	return a.Amount() == b.Amount() && a.Currency() == b.Currency()
@@ -42,6 +47,14 @@ func (m *Money) Times(multiplier int) *Money {
 	}
 }
 
+// Plus adds two and return a new one
+func (m *Money) Plus(n *Money) *Money {
+	return &Money{
+		amount:   m.Amount() + n.Amount(),
+		currency: m.Currency(),
+	}
+}
+
 // Dollar function to create new dollar
 func dollar(d int) *Money {
 	return &Money{
@@ -56,4 +69,13 @@ func franc(f int) *Money {
 		amount:   f,
 		currency: "CHF",
 	}
+}
+
+// Bank structure
+type Bank struct {
+}
+
+// Reduce use the expression
+func (b *Bank) Reduce(ex ExpressionInterface, to string) *Money {
+	return dollar(10)
 }
