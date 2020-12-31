@@ -10,7 +10,7 @@ type MoneyInterface interface {
 
 // ExpressionInterface interface
 type ExpressionInterface interface {
-	Plus(*Money) *Money
+	Reduce(to string) *Money
 }
 
 // Equals function compares two objects for the value
@@ -55,6 +55,14 @@ func (m *Money) Plus(n *Money) *Money {
 	}
 }
 
+// Reduce return value of the operation already done
+func (m *Money) Reduce(to string) *Money {
+	return &Money{
+		amount:   m.amount,
+		currency: m.currency,
+	}
+}
+
 // Dollar function to create new dollar
 func dollar(d int) *Money {
 	return &Money{
@@ -77,5 +85,20 @@ type Bank struct {
 
 // Reduce use the expression
 func (b *Bank) Reduce(ex ExpressionInterface, to string) *Money {
-	return dollar(10)
+	return ex.Reduce(to)
+}
+
+// Sum structure to return expression
+type Sum struct {
+	augend *Money
+	addend *Money
+}
+
+// Reduce function implementation for ExpressionInterface
+func (s *Sum) Reduce(to string) *Money {
+	amount := s.augend.Amount() + s.addend.Amount()
+	return &Money{
+		amount:   amount,
+		currency: to,
+	}
 }

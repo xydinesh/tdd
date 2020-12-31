@@ -80,3 +80,15 @@ func TestSimpleAddition(t *testing.T) {
 		t.Errorf("Expected 10 got %d", reduced.Amount())
 	}
 }
+
+func TestReduceSum(t *testing.T) {
+	sum := &Sum{
+		augend: dollar(3),
+		addend: dollar(4),
+	}
+	bank := &Bank{}
+	result := bank.Reduce(sum, "USD")
+	if !Equals(dollar(7), result) {
+		t.Errorf("Expected 7 got %d", result.Amount())
+	}
+}
