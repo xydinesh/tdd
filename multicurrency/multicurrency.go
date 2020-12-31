@@ -10,7 +10,7 @@ type MoneyInterface interface {
 
 // ExpressionInterface interface
 type ExpressionInterface interface {
-	Reduce(to string) *Money
+	Reduce(bank *Bank, to string) *Money
 }
 
 // Equals function compares two objects for the value
@@ -56,10 +56,11 @@ func (m *Money) Plus(n *Money) *Money {
 }
 
 // Reduce return value of the operation already done
-func (m *Money) Reduce(to string) *Money {
+func (m *Money) Reduce(bank *Bank, to string) *Money {
+	rate := bank.Rate(m.Currency(), to)
 	return &Money{
-		amount:   m.amount,
-		currency: m.currency,
+		amount:   m.amount / rate,
+		currency: to,
 	}
 }
 
@@ -81,11 +82,38 @@ func franc(f int) *Money {
 
 // Bank structure
 type Bank struct {
+	rates map[Pair]int
+}
+
+// NewBank creates an instance of a Bank structure
+func NewBank() *Bank {
+	return &Bank{
+		rates: make(map[Pair]int),
+	}
 }
 
 // Reduce use the expression
 func (b *Bank) Reduce(ex ExpressionInterface, to string) *Money {
-	return ex.Reduce(to)
+	return ex.Reduce(b, to)
+}
+
+// AddRate to add different rates
+func (b *Bank) AddRate(from string, to string, rate int) {
+	b.rates[Pair{
+		from: from,
+		to:   to,
+	}] = rate
+}
+
+// Rate return exchange rate for from -> to
+func (b *Bank) Rate(from string, to string) int {
+	if v, ok := b.rates[Pair{
+		from: from,
+		to:   to,
+	}]; ok {
+		return v
+	}
+	return 1
 }
 
 // Sum structure to return expression
@@ -95,10 +123,21 @@ type Sum struct {
 }
 
 // Reduce function implementation for ExpressionInterface
-func (s *Sum) Reduce(to string) *Money {
+func (s *Sum) Reduce(bank *Bank, to string) *Money {
 	amount := s.augend.Amount() + s.addend.Amount()
 	return &Money{
 		amount:   amount,
 		currency: to,
 	}
+}
+
+// Pair data structure to store currency exchanges
+type Pair struct {
+	from string
+	to   string
+}
+
+// Equals compare two pairs
+func (p *Pair) Equals(n *Pair) bool {
+	return p.from == n.from && p.to == n.to
 }

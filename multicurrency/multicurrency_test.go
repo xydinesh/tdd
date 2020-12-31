@@ -74,7 +74,7 @@ func TestCurrency(t *testing.T) {
 func TestSimpleAddition(t *testing.T) {
 	five := dollar(5)
 	sum := five.Plus(five)
-	bank := &Bank{}
+	bank := NewBank()
 	reduced := bank.Reduce(sum, "USD")
 	if !Equals(reduced, dollar(10)) {
 		t.Errorf("Expected 10 got %d", reduced.Amount())
@@ -86,9 +86,18 @@ func TestReduceSum(t *testing.T) {
 		augend: dollar(3),
 		addend: dollar(4),
 	}
-	bank := &Bank{}
+	bank := NewBank()
 	result := bank.Reduce(sum, "USD")
 	if !Equals(dollar(7), result) {
 		t.Errorf("Expected 7 got %d", result.Amount())
+	}
+}
+
+func TestReduceMoneyDifferentCurrency(t *testing.T) {
+	bank := NewBank()
+	bank.AddRate("CHF", "USD", 2)
+	result := bank.Reduce(franc(2), "USD")
+	if !Equals(dollar(1), result) {
+		t.Errorf("Expected 1 got %d", result.Amount())
 	}
 }
