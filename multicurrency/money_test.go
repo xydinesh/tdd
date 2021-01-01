@@ -1,6 +1,9 @@
 package multicurrency
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 /*
 * $5 + 10 CHF = $10 if rate is 2:1
@@ -16,11 +19,13 @@ import "testing"
 
 func TestFrancMultiplication(t *testing.T) {
 	five := franc(5)
-	prd := five.Times(2)
+	// Casting interface back to struct pointer using
+	// IBar.(*foo) type casting
+	prd := five.Times(2).(*Money)
 	if !prd.Equals(franc(10)) {
 		t.Errorf("Expected 10 but got %d", prd.amount)
 	}
-	prd = five.Times(3)
+	prd = five.Times(3).(*Money)
 	if !prd.Equals(franc(15)) {
 		t.Errorf("Expected 15 but got %d", prd.amount)
 	}
@@ -28,11 +33,11 @@ func TestFrancMultiplication(t *testing.T) {
 
 func TestMultiplication(t *testing.T) {
 	five := dollar(5)
-	prd := five.Times(2)
+	prd := five.Times(2).(*Money)
 	if !prd.Equals(dollar(10)) {
 		t.Errorf("Expected 10 but got %d", prd.amount)
 	}
-	prd = five.Times(3)
+	prd = five.Times(3).(*Money)
 	if !prd.Equals(dollar(15)) {
 		t.Errorf("Expected 15 but got %d", prd.amount)
 	}
@@ -110,5 +115,44 @@ func TestMixedAddition(t *testing.T) {
 	result := bank.Reduce(fiveDollars.Plus(tenFrancs), "USD")
 	if !result.Equals(dollar(10)) {
 		t.Errorf("Expected 10 got %d", result.Amount())
+	}
+}
+
+func TestSumPlusMoney(t *testing.T) {
+	fiveDollars := dollar(5)
+	tenFrancs := franc(10)
+	bank := NewBank()
+	bank.AddRate("CHF", "USD", 2)
+	sum := &Sum{
+		augend: fiveDollars,
+		addend: tenFrancs,
+	}
+	result := bank.Reduce(sum.Plus(fiveDollars), "USD")
+	if !result.Equals(dollar(15)) {
+		t.Errorf("Expected 15 got %d", result.Amount())
+	}
+
+}
+
+func TestSumTimes(t *testing.T) {
+	fiveDollars := dollar(5)
+	tenFrancs := franc(10)
+	bank := NewBank()
+	bank.AddRate("CHF", "USD", 2)
+	sum := &Sum{
+		augend: fiveDollars,
+		addend: tenFrancs,
+	}
+	result := bank.Reduce(sum.Times(2), "USD")
+	if !result.Equals(dollar(20)) {
+		t.Errorf("Expected 20 got %d", result.Amount())
+	}
+}
+
+func TestPlusSameCurrencyReturnsMonesy(t *testing.T) {
+	sum := dollar(1).Plus(dollar(1))
+	castVar := reflect.ValueOf(sum)
+	if castVar.Type() != reflect.TypeOf(&Money{}) {
+		t.Errorf("Expected %v type got %v", reflect.TypeOf(&Money{}), castVar.Type())
 	}
 }

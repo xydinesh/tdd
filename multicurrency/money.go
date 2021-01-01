@@ -6,6 +6,7 @@ import "fmt"
 type ExpressionInterface interface {
 	Reduce(bank *Bank, to string) *Money
 	Plus(addend ExpressionInterface) ExpressionInterface
+	Times(multiplier int) ExpressionInterface
 }
 
 // Money is a super class for Dollar and Franc
@@ -35,7 +36,7 @@ func (m *Money) Currency() string {
 }
 
 // Times returns the multiplications
-func (m *Money) Times(multiplier int) *Money {
+func (m *Money) Times(multiplier int) ExpressionInterface {
 	return &Money{
 		amount:   m.Amount() * multiplier,
 		currency: m.Currency(),
@@ -44,10 +45,19 @@ func (m *Money) Times(multiplier int) *Money {
 
 // Plus adds two and return a new one
 func (m *Money) Plus(n ExpressionInterface) ExpressionInterface {
+	f, ok := n.(*Money)
+	if ok && m.Currency() == f.Currency() {
+		return &Money{
+			amount:   m.Amount() + f.Amount(),
+			currency: m.Currency(),
+		}
+	}
+
 	return &Sum{
 		augend: m,
 		addend: n,
 	}
+
 }
 
 // Reduce return value of the operation already done

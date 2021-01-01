@@ -16,6 +16,17 @@ func (s *Sum) Reduce(bank *Bank, to string) *Money {
 }
 
 // Plus function implementation for ExpressionInerface
-func (s *Sum) Plus(addend ExpressionInterface) ExpressionInterface {
-	return nil
+func (s *Sum) Plus(n ExpressionInterface) ExpressionInterface {
+	return &Sum{
+		augend: s,
+		addend: n,
+	}
+}
+
+// Times returns the multiplications
+func (s *Sum) Times(multiplier int) ExpressionInterface {
+	return &Sum{
+		augend: s.augend.Times(multiplier),
+		addend: s.addend.Times(multiplier),
+	}
 }
