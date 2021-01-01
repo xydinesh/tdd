@@ -17,11 +17,11 @@ import "testing"
 func TestFrancMultiplication(t *testing.T) {
 	five := franc(5)
 	prd := five.Times(2)
-	if !Equals(prd, franc(10)) {
+	if !prd.Equals(franc(10)) {
 		t.Errorf("Expected 10 but got %d", prd.amount)
 	}
 	prd = five.Times(3)
-	if !Equals(prd, franc(15)) {
+	if !prd.Equals(franc(15)) {
 		t.Errorf("Expected 15 but got %d", prd.amount)
 	}
 }
@@ -29,33 +29,33 @@ func TestFrancMultiplication(t *testing.T) {
 func TestMultiplication(t *testing.T) {
 	five := dollar(5)
 	prd := five.Times(2)
-	if !Equals(prd, dollar(10)) {
+	if !prd.Equals(dollar(10)) {
 		t.Errorf("Expected 10 but got %d", prd.amount)
 	}
 	prd = five.Times(3)
-	if !Equals(prd, dollar(15)) {
+	if !prd.Equals(dollar(15)) {
 		t.Errorf("Expected 15 but got %d", prd.amount)
 	}
 }
 
 func TestEquality(t *testing.T) {
 	five := dollar(5)
-	if !Equals(five, dollar(5)) {
+	if !five.Equals(dollar(5)) {
 		t.Errorf("Expected true but got false")
 	}
-	if Equals(five, dollar(6)) {
+	if five.Equals(dollar(6)) {
 		t.Errorf("Expected false but got true")
 	}
 
 	six := franc(6)
-	if !Equals(six, franc(6)) {
+	if !six.Equals(franc(6)) {
 		t.Errorf("Expected true but got false")
 	}
-	if Equals(six, franc(5)) {
+	if six.Equals(franc(5)) {
 		t.Errorf("Expected false but got true")
 	}
 
-	if Equals(six, dollar(6)) {
+	if six.Equals(dollar(6)) {
 		t.Errorf("Expected false but got true")
 	}
 }
@@ -76,7 +76,7 @@ func TestSimpleAddition(t *testing.T) {
 	sum := five.Plus(five)
 	bank := NewBank()
 	reduced := bank.Reduce(sum, "USD")
-	if !Equals(reduced, dollar(10)) {
+	if !reduced.Equals(dollar(10)) {
 		t.Errorf("Expected 10 got %d", reduced.Amount())
 	}
 }
@@ -88,7 +88,7 @@ func TestReduceSum(t *testing.T) {
 	}
 	bank := NewBank()
 	result := bank.Reduce(sum, "USD")
-	if !Equals(dollar(7), result) {
+	if !result.Equals(dollar(7)) {
 		t.Errorf("Expected 7 got %d", result.Amount())
 	}
 }
@@ -97,7 +97,18 @@ func TestReduceMoneyDifferentCurrency(t *testing.T) {
 	bank := NewBank()
 	bank.AddRate("CHF", "USD", 2)
 	result := bank.Reduce(franc(2), "USD")
-	if !Equals(dollar(1), result) {
+	if !result.Equals(dollar(1)) {
 		t.Errorf("Expected 1 got %d", result.Amount())
+	}
+}
+
+func TestMixedAddition(t *testing.T) {
+	fiveDollars := dollar(5)
+	tenFrancs := franc(10)
+	bank := NewBank()
+	bank.AddRate("CHF", "USD", 2)
+	result := bank.Reduce(fiveDollars.Plus(tenFrancs), "USD")
+	if !result.Equals(dollar(10)) {
+		t.Errorf("Expected 10 got %d", result.Amount())
 	}
 }
